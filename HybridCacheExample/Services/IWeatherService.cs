@@ -2,5 +2,5 @@
 
 public interface IWeatherService
 {
-    Task<WeatherResponse?> GetWeatherByCityAsync(string cityName);
+    Task<WeatherResponse?> GetWeatherByCityAsync(string cityName, CancellationToken cancellationToken = default);
 }

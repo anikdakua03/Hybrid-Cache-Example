@@ -17,9 +17,9 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet("GetWeatherByCityName/{cityName}")]
-    public async Task<IActionResult> GetWeatherByCityName(string cityName)
+    public async Task<IActionResult> GetWeatherByCityName(string cityName, CancellationToken cancellationToken = default)
     {
-        var weather = await _weatherService.GetWeatherByCityAsync(cityName);
+        var weather = await _weatherService.GetWeatherByCityAsync(cityName, cancellationToken);
 
         if (weather == null)
         {

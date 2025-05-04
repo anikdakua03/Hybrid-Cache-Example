@@ -16,6 +16,12 @@ builder.Services.AddHttpClient("weather",(serviceProvider, client) =>
     client.BaseAddress = new Uri(settings.BASE_URL ?? throw new InvalidOperationException($"Invalid BASE_URL in configuration: {settings.BASE_URL}"));
 });
 
+// simple memory cache
+builder.Services.AddMemoryCache(options =>
+{
+    //options.ExpirationScanFrequency = TimeSpan.FromMinutes(5);
+});
+
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 
 var app = builder.Build();
