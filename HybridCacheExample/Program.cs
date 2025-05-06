@@ -17,9 +17,16 @@ builder.Services.AddHttpClient("weather",(serviceProvider, client) =>
 });
 
 // simple memory cache
-builder.Services.AddMemoryCache(options =>
+builder.Services.AddMemoryCache();
+
+// distributed cache
+builder.Services.AddStackExchangeRedisCache(options =>
 {
-    //options.ExpirationScanFrequency = TimeSpan.FromMinutes(5);
+    string? redisConnection = builder.Configuration.GetConnectionString("redis");
+
+    options.Configuration = redisConnection ?? throw new InvalidOperationException($"Invalid BASE_URL in configuration: {redisConnection}");
+
+    options.InstanceName = "redis";
 });
 
 builder.Services.AddScoped<IWeatherService, WeatherService>();
