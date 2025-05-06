@@ -1,5 +1,9 @@
-var builder = DistributedApplication.CreateBuilder(args);
+IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.HybridCacheExample>("hybrid-cache-example");
+var redisCache = builder.AddRedis("redis");
+
+builder.AddProject<Projects.HybridCacheExample>("hybrid-cache-example")
+        .WithReference(redisCache)
+        .WaitFor(redisCache);
 
 builder.Build().Run();
