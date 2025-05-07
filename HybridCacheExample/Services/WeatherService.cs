@@ -1,5 +1,6 @@
 ﻿using HybridCacheExample.Configurations;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -11,19 +12,23 @@ public class WeatherService : IWeatherService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly WeatherAPISettings _settings;
     //private readonly IMemoryCache _memoryCache;
-    private readonly IDistributedCache _distributedCache;
+    //private readonly IDistributedCache _distributedCache;
+    private readonly HybridCache _hybridCache;
 
-    public WeatherService(IHttpClientFactory httpClientFactory, IOptions<WeatherAPISettings> settings, /*IMemoryCache memoryCache,*/ IDistributedCache distributedCache)
+    public WeatherService(IHttpClientFactory httpClientFactory, IOptions<WeatherAPISettings> settings, /*IMemoryCache memoryCache,*/ /*IDistributedCache distributedCache, */ HybridCache hybridCache)
     {
         _httpClientFactory = httpClientFactory;
         _settings = settings.Value;
         //_memoryCache = memoryCache;
-        _distributedCache = distributedCache;
+        //_distributedCache = distributedCache;
+        _hybridCache = hybridCache;
     }
 
     public async Task<WeatherResponse?> GetWeatherByCityAsync(string cityName, CancellationToken cancellationToken = default)
     {
         string cacheKey = $"weather-{cityName}";
+
+        #region In memory cache
 
         //var cachedWeather = await _memoryCache.GetOrCreateAsync(cacheKey, async entry =>
         //{
@@ -32,28 +37,49 @@ public class WeatherService : IWeatherService
         //    return await GetWeatherByCityFromClient(cityName, cancellationToken);
         //});
 
-        string? cachedWeatherString = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
+        //return cachedWeather;
 
-        if (string.IsNullOrEmpty(cachedWeatherString) == false)
+        #endregion In memory cache ends here
+
+        #region Distributive cache
+
+        //string? cachedWeatherString = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
+
+        //if (string.IsNullOrEmpty(cachedWeatherString) == false)
+        //{
+        //    // already cached , so deserialized to proper type
+        //    WeatherResponse? cachedWeather = JsonConvert.DeserializeObject<WeatherResponse>(cachedWeatherString);
+
+        //    return cachedWeather;
+        //}
+
+        //// other wise call the external api and then add to cache
+        //WeatherResponse? weatherResponse = await GetWeatherByCityFromClient(cityName, cancellationToken);
+
+        //if(weatherResponse is null)
+        //{
+        //    // no need to cache, just return
+        //    return weatherResponse;
+        //}
+
+        //await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(weatherResponse), cancellationToken);
+
+        //return weatherResponse;
+
+        #endregion Distributive cache ends here
+
+        #region Hybrid cache
+
+        WeatherResponse? cachedWeather = await _hybridCache.GetOrCreateAsync(cacheKey, async cancellationToken =>
         {
-            // already cached , so deserialized to proper type
-            WeatherResponse? cachedWeather = JsonConvert.DeserializeObject<WeatherResponse>(cachedWeatherString);
+            return await GetWeatherByCityFromClient(cityName, cancellationToken);
+        },
+        tags: ["weather"],
+        cancellationToken: cancellationToken);
 
-            return cachedWeather;
-        }
+        return cachedWeather;
 
-        // other wise call the external api and then add to cache
-        WeatherResponse? weatherResponse = await GetWeatherByCityFromClient(cityName, cancellationToken);
-
-        if(weatherResponse is null)
-        {
-            // no need to cache, just return
-            return weatherResponse;
-        }
-
-        await _distributedCache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(weatherResponse), cancellationToken);
-
-        return weatherResponse;
+        #endregion Hybrid cache ends here
     }
 
     private async Task<WeatherResponse?> GetWeatherByCityFromClient(string cityName, CancellationToken cancellationToken = default)

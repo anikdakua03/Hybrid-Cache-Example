@@ -4,3 +4,8 @@ GET {{HybridCacheExample_HostAddress}}/WeatherForecast/GetWeatherByCityName/Barc
 Accept: application/json
 
 ###
+
+GET {{HybridCacheExample_HostAddress}}/WeatherForecast/GetWeatherByCityName/Paris
+Accept: application/json
+
+###
