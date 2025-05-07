@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace HybridCacheExample.Services;
 
@@ -14,14 +15,16 @@ public class WeatherService : IWeatherService
     //private readonly IMemoryCache _memoryCache;
     //private readonly IDistributedCache _distributedCache;
     private readonly HybridCache _hybridCache;
+    //private readonly IFusionCache _fusionCache; // we need to use this one but since we have added AsHybridCache() , so we can use the same
 
-    public WeatherService(IHttpClientFactory httpClientFactory, IOptions<WeatherAPISettings> settings, /*IMemoryCache memoryCache,*/ /*IDistributedCache distributedCache, */ HybridCache hybridCache)
+    public WeatherService(IHttpClientFactory httpClientFactory, IOptions<WeatherAPISettings> settings, /*IMemoryCache memoryCache,*/ /*IDistributedCache distributedCache, */ HybridCache hybridCache/*, IFusionCache fusionCache*/)
     {
         _httpClientFactory = httpClientFactory;
         _settings = settings.Value;
         //_memoryCache = memoryCache;
         //_distributedCache = distributedCache;
         _hybridCache = hybridCache;
+        //_fusionCache = fusionCache;
     }
 
     public async Task<WeatherResponse?> GetWeatherByCityAsync(string cityName, CancellationToken cancellationToken = default)
