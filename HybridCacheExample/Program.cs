@@ -65,6 +65,18 @@ builder.Services.AddFusionCache()
 
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithExposedHeaders("Access-Control-Allow-Private-Network");
+    });
+});
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
