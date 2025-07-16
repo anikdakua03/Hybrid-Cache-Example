@@ -1,3 +1,4 @@
+using HybridCacheExample.AppHost;
 using Microsoft.Extensions.Hosting;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
@@ -6,7 +7,9 @@ var redisCache = builder.AddRedis("redis");
 
 var weatherApi = builder.AddProject<Projects.HybridCacheExample>("hybrid-cache-example")
         .WithReference(redisCache)
-        .WaitFor(redisCache);
+        .WaitFor(redisCache)
+        .WithSwaggerUI()
+        .WithScalar();
 
 var frontend = builder.AddNpmApp("angular-with-material", "../angular-with-material", "watch")
     .WithReference(weatherApi)

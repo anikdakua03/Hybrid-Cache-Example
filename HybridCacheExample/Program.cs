@@ -3,6 +3,7 @@ using HybridCacheExample.Services;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
@@ -84,6 +85,27 @@ app.MapDefaultEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Add Swagger UI
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Open API V1");
+    });
+
+    // Add Scalar [ for customization use chaining options ]
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Hello Scalar")
+            .WithTheme(ScalarTheme.BluePlanet)
+            .WithLayout(ScalarLayout.Classic)
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        //options.Title = "Hello Scalar";
+        //options.Theme = ScalarTheme.Solarized;
+        //options.Layout = ScalarLayout.Classic;
+        //options.DefaultHttpClient = new KeyValuePair<ScalarTarget, ScalarClient>(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
 }
 
 app.UseHttpsRedirection();
