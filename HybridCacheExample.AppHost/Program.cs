@@ -11,10 +11,11 @@ var weatherApi = builder.AddProject<Projects.HybridCacheExample>("hybrid-cache-e
         .WithSwaggerUI()
         .WithScalar();
 
-var frontend = builder.AddNpmApp("angular-with-material", "../angular-with-material", "watch")
+var frontend = builder.AddNpmApp("angular-with-material", "../angular-with-material")
     .WithReference(weatherApi)
-    //.WithHttpEndpoint(env: "PORT")
-    .WithEndpoint(scheme: "http", env: "PORT")
+    .WithHttpEndpoint(env: "PORT")
+    .WithUrl("http://localhost:4200", "Angular UI")
+    //.WithEndpoint(port:4200, scheme: "http", env: "PORT")
     .WithExternalHttpEndpoints();
 
 var launchProfile = builder.Configuration["DOTNET_LAUNCH_PROFILE"];
