@@ -8,8 +8,12 @@ var redisCache = builder.AddRedis("redis");
 var weatherApi = builder.AddProject<Projects.HybridCacheExample>("hybrid-cache-example")
         .WithReference(redisCache)
         .WaitFor(redisCache)
+        .WithUrl("http://localhost:5210", "API")
         .WithSwaggerUI()
         .WithScalar();
+
+var functionAPI = builder.AddAzureFunctionsProject<Projects.HybridCacheFunction>("hybridcachefunction")
+        ;
 
 var frontend = builder.AddNpmApp("angular-with-material", "../angular-with-material")
     .WithReference(weatherApi)

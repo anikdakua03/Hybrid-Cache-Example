@@ -8,4 +8,21 @@ Accept: application/json
 GET {{HybridCacheExample_HostAddress}}/WeatherForecast/GetWeatherByCityName/Paris
 Accept: application/json
 
+### 
+GET http://localhost:7071/api/GetJWTToken
+Content-Type : application/json
+Accept: application/json
+
 ###
+@token = 
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXIiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3NTI5MTY5MDMsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NzA3MSIsImF1ZCI6InlvdXItYXVkaWVuY2UifQ.1MC6nd1lFezZ748IJukZevri3lcfZBJqKoF9uTGZ6VQ
+
+POST http://localhost:7071/api/Function1
+Content-Type : application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "key1": "value1",
+  "key2": "value2"
+}
